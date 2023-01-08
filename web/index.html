@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock / Index</title>
+    <style>
+        * {
+            background-color: aliceblue;
+        }
+        img {
+            height: fit-content;
+            width: fit-content;
+        }
+        #submit {
+            background-color: white;
+            font-size: 1em;
+        }
+    </style>
+    <script type="text/javascript">
+        function readFromTextBox(id, default_value) {
+            const res = document.getElementById(id).value;
+            return res ? res : default_value;
+        }
+        function submit() {
+            async function getData() {
+                let imageElement = document.querySelector('img#result');
+                if (imageElement) {
+                    let ticket = readFromTextBox('ticket', 'GOOG');
+                    let history = readFromTextBox('history', 'max');
+                    console.log(ticket, history);
+                    try {
+                        return (await fetch(`http://127.0.0.1:5000/api/${ticket}/${history}`)
+                                .then(response => response.json())
+                                .then(data => imageElement.src = data['src'])
+                        );
+                    } catch (error) {
+                        console.error(error);
+                        return null;
+                    }
+                }
+
+            }
+            getData();
+        }
+    </script>
+</head>
+<body>
+<div class="main">
+    <label for="ticket">Ticket:</label><br>
+    <input type="text" id="ticket" name="stock"><br><br>
+    <label for="history">History:</label><br>
+    <input type="text" id="history" name="history"><br><br>
+    <input type="submit" id="submit" value="Submit" onclick="submit()"><br><br>
+    <hr>
+    <h3>Result</h3>
+    <img id="result" src="" alt="Click submit button to get result">
+</div>
+</body>
+</html>
